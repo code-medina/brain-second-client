@@ -1,40 +1,17 @@
+import { LocalStorageRespository } from './repositories/local-storage.repository'
 import './style.css'
-import { IdeaService } from './services/idea.service'
-import { CreateIdeaSchema } from './schemas/idea/create-idea.schema'
-import { CreateKwoledgeSchema } from './schemas/knowledge/create-knowledge.schema'
-import { CreateDevLogSchema } from './schemas/devlog/create-dev-log.schema'
+
+const repo = new LocalStorageRespository()
+console.log(await repo.list())
+await repo.create({description:"description test1"});
+await repo.create({description:"description test2"});
+await repo.create({description:"description test3"});
+const lista=await repo.list();
+const id=lista[0]._id;
+repo.update({_id:id,description:"update test1"});
+console.log(await repo.list());
+repo.destroy(id);
+console.log(await repo.list());
 
 
-const dtoCreate: CreateIdeaSchema = {
-  description: 'hi',
-}
-const result = CreateIdeaSchema.safeParse(dtoCreate)
-if (result.success) {
-  console.log(result.data)
-  IdeaService.create(result.data)
-} else {
-  console.log(result.error.issues) //array
-}
 
-
-const dtoKnowledge:CreateKwoledgeSchema={
-    title: 'h',
-    content: 'h'
-};
-const result2=CreateKwoledgeSchema.safeParse(dtoKnowledge);
-if (result2.success) {
-  console.log(result2.data)
-} else {
-  console.log(result2.error.issues) //array
-}
-
-
-const dtoDevLog:CreateDevLogSchema={
-    content: 'h'
-}
-const result3=CreateDevLogSchema.safeParse(dtoDevLog);
-if (result3.success) {
-  console.log(result3.data)
-} else {
-  console.log(result3.error.issues) //array
-}
