@@ -1,22 +1,31 @@
+import type { IdeaRepository } from '../repositories/idea.repository'
 import type { IdSchema } from '../schemas/common/common.schema'
 import type { CreateIdeaSchema } from '../schemas/idea/create-idea.schema'
 
 import type { UpdateIdeaSchema } from '../schemas/idea/update-idea.schema'
 
 export class IdeaService {
-  static async create(dto: CreateIdeaSchema) {
-    console.log('fetch  create idea', dto)
+  private repo: IdeaRepository
+  constructor(repository: IdeaRepository) {
+    this.repo = repository
   }
-  static async getAll() {
-    console.log('fectch get all idea')
+
+  async create(dto: CreateIdeaSchema) {
+    return await this.repo.create(dto)
+  }
+  async getAll() {
+    return await this.repo.list()
   }
   static async getOne(id: IdSchema) {
-    console.log('fecth get one idea',id)
+    console.log('fecth get one idea', id)
   }
-  static async update(dto: UpdateIdeaSchema) {
+  async update(dto: UpdateIdeaSchema) {
+
     console.log('fectch update idea', dto)
+  return  await this.repo.update(dto);
   }
-  static async destroy(id: IdSchema) {
+   async destroy(id: IdSchema) {
     console.log('featch destroy idea', id)
+    await this.repo.destroy(id);
   }
 }
