@@ -5,7 +5,7 @@ import type { IdeaSchema } from '../schemas/idea/idea.schema'
 import type { UpdateIdeaSchema } from '../schemas/idea/update-idea.schema'
 import type { IdeaRepository } from './idea.repository'
 localStorage.clear()
-export class LocalStorageRespository implements IdeaRepository {
+export class IdeaLocalStorageRespository implements IdeaRepository {
   private key = 'ideas'
 
   private read() {

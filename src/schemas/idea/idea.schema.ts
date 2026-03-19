@@ -4,7 +4,14 @@ import { BaseEntitySchema } from '../common/base-entity.schema'
 const DESCRIPTION_MAX = 300
 const DESCRIPTION_MIN = 3
 
+const TITLE_MIN = 3
+const TITLE_MAX = 20
+
 export const IdeaSchema = BaseEntitySchema.extend({
+  title: z
+    .string()
+    .min(TITLE_MIN, `[ title ] too shor`)
+    .max(TITLE_MAX, `[ title ] maximun of ${TITLE_MAX} characteres`),
   description: z
     .string()
     .min(DESCRIPTION_MIN, `[description] too short`)
