@@ -6,6 +6,11 @@ export function ideaCardRender(idea: IdeaSchema) {
   const card = createIdeaCard()
   card.title.textContent = idea.title
   card.description.textContent = idea.description
-  card.footer.textContent=idea._id;
-  return card.root;
+  card.footer.textContent = idea._id
+  card.footer.innerHTML += `<button data-action="delete">delete</button>`
+  card.footer.innerHTML += `<button data-action="edit">edit</button>`
+  card.root.dataset.id=idea._id;
+  card.root.id = idea._id //closest
+
+  return card.root
 }
