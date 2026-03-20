@@ -3,7 +3,6 @@ import { ideaCardRender } from '../render/idea-card.render'
 import type { IdeaService } from '../services/idea.service'
 
 export class IdeaController implements DestroyableController {
-
   private service: IdeaService
   private container: HTMLElement
   private actions: Record<string, (id: string) => Promise<void> | void>
@@ -24,10 +23,10 @@ export class IdeaController implements DestroyableController {
         this.deleteIdea(id)
       },
     }
-    this.setupDelegation();
-    this.listIdea();
+    this.setupDelegation()
+    this.listIdea()
   }
-  
+
   destroy(): void {
     this.container.removeEventListener('submit', this.handlerSubmit)
     this.container.removeEventListener('click', this.handlerClick)
@@ -66,18 +65,15 @@ export class IdeaController implements DestroyableController {
     //todo
     console.log('edit idea show modal??', id)
   }
-  private async listIdea()
-  {
-    const list=await this.service.getAll();
-    console.log(list);
-    // add card the list 
-    const div=this.container.querySelector("#idea-list-div");
-    console.log(div);
-    list.forEach(l=>{
-      div?.append(ideaCardRender(l));
+  private async listIdea() {
+    const list = await this.service.getAll()
+    console.log(list)
+    // add card the list
+    console.log(this.container)
+    const div = this.container.querySelector('#idea-list-div')
+    console.log(div)
+    list.forEach(l => {
+      div?.append(ideaCardRender(l))
     })
-    
-
-
   }
 }
