@@ -2,7 +2,7 @@ import type { AppServices } from '../interfaces/app.services'
 import type { DestroyableController } from '../interfaces/destroyable-controller.interface'
 import { ideaSectionRender } from '../render/idea-section.render'
 import { render } from '../render/render'
-import { createSectionIdea } from '../ui/create-section-idea'
+
 import { IdeaController } from './idea.controller'
 
 export class MenuController {
@@ -22,11 +22,7 @@ export class MenuController {
     }
     this.setupMenu()
   }
-  /*   private render(frag:DocumentFragment)
-  {
-    this.routerOutlet.innerHTML="";
-    this.routerOutlet.append(frag);
-  } */
+
   private setupMenu() {
     this.menu.addEventListener('click', async (ev: PointerEvent) => {
       ev.preventDefault()
