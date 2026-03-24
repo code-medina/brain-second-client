@@ -1,5 +1,6 @@
 import type { DestroyableController } from '../interfaces/destroyable-controller.interface'
 import { ideaCardRender } from '../render/idea-card.render'
+import { newIdeaFormRender } from '../render/new-idea-form.render'
 import type { IdeaService } from '../services/idea.service'
 
 export class IdeaController implements DestroyableController {
@@ -8,13 +9,13 @@ export class IdeaController implements DestroyableController {
   private actions: Record<string, (id: string) => Promise<void> | void>
   private boundHandlerClick: (ev: PointerEvent) => Promise<void>
   private boundHandlerSubmit: (ev: SubmitEvent) => Promise<void>
+
   constructor(service: IdeaService, container: HTMLElement) {
     this.service = service
     this.container = container
     //binds
     this.boundHandlerClick = this.handlerClick.bind(this)
     this.boundHandlerSubmit = this.handlerSubmit.bind(this)
-    /* this.destroy = this.destroy.bind(this) */
 
     //actions
     this.actions = {
@@ -70,10 +71,18 @@ export class IdeaController implements DestroyableController {
 
   private async deleteIdea(id: string): Promise<void> {
     await this.service.destroy(id)
+    const card = document.getElementById(id)
+    console.log('card', card)
+    if (card) {
+      card.remove()
+    }
   }
   private async editIdea(id: string) {
     //todo
     //show form edit idea
+
+    document.getElementById("content-dialog")?.append(newIdeaFormRender());
+    (document.getElementById("modal-dialog") as HTMLDialogElement).showModal();
     console.log('show form with idea', id)
   }
   private async listIdea() {
