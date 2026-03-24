@@ -1,11 +1,16 @@
 export function ideaForm() {
   const form = document.createElement('form')
   const title = document.createElement('input')
-  title.setAttribute('type', 'text')
+  const description=document.createElement("textarea");
   const submit = document.createElement('button')
-  submit.setAttribute('type', 'submit')
   const cancel = document.createElement('button')
+  const id=document.createElement("input");
+
+  id.setAttribute("type","hidden");
+  title.setAttribute('type', 'text')
+  submit.setAttribute('type', 'submit')
   cancel.setAttribute('type', 'button')
-  form.append(title, submit, cancel)
-  return { form, title, submit, cancel }
+
+  form.append(id,title,description, submit, cancel);
+  return { form,id ,title,description, submit, cancel }
 }

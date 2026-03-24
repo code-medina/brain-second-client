@@ -1,6 +1,7 @@
 import type { DestroyableController } from '../interfaces/destroyable-controller.interface'
+import { editIdeaForm } from '../render/edit-idea-form'
 import { ideaCardRender } from '../render/idea-card.render'
-import { newIdeaFormRender } from '../render/new-idea-form.render'
+
 import type { IdeaService } from '../services/idea.service'
 
 export class IdeaController implements DestroyableController {
@@ -81,9 +82,15 @@ export class IdeaController implements DestroyableController {
     //todo
     //show form edit idea
 
-    document.getElementById("content-dialog")?.append(newIdeaFormRender());
-    (document.getElementById("modal-dialog") as HTMLDialogElement).showModal();
-    console.log('show form with idea', id)
+    const lista=await this.service.getAll()
+    const unico=lista.filter(i=>i._id===id);
+    if(unico[0])
+    {
+      document.getElementById("content-dialog")?.append(editIdeaForm(unico[0]));
+      (document.getElementById("modal-dialog") as HTMLDialogElement).showModal();
+      console.log('show form with idea', id)
+
+    }
   }
   private async listIdea() {
     const list = await this.service.getAll()
