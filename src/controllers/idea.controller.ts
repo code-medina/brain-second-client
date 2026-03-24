@@ -82,11 +82,10 @@ export class IdeaController implements DestroyableController {
     //todo
     //show form edit idea
 
-    const lista=await this.service.getAll()
-    const unico=lista.filter(i=>i._id===id);
-    if(unico[0])
+    const exit=await this.service.getById(id);
+    if(exit)
     {
-      document.getElementById("content-dialog")?.append(editIdeaForm(unico[0]));
+      document.getElementById("content-dialog")?.append(editIdeaForm(exit));
       (document.getElementById("modal-dialog") as HTMLDialogElement).showModal();
       console.log('show form with idea', id)
 
