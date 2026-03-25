@@ -84,8 +84,9 @@ export class IdeaController implements DestroyableController {
     }
   }
 
-  private handlerSubmitEdit = async (ev: SubmitEvent) => {
+  private handlerSubmitEdit = async (ev:Event) => {
     ev.preventDefault()
+
     const target = ev.target as HTMLFormElement
     const formData = new FormData(target)
     console.log(formData)
@@ -109,7 +110,8 @@ export class IdeaController implements DestroyableController {
     if (exit) {
       const form = editIdeaForm(exit)
 
-      form.addEventListener('submit', this.handlerSubmitEdit,{once:true})
+      this.modalService.registerHandler("submit",this.handlerSubmitEdit)
+      /* form.addEventListener('submit', this.handlerSubmitEdit,{once:true}) */
       this.modalService.showModal(form)
 
       console.log('show form with idea', id)
