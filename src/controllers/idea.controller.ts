@@ -1,4 +1,3 @@
-
 import type { DestroyableController } from '../interfaces/destroyable-controller.interface'
 import { editIdeaForm } from '../render/edit-idea-form'
 import { ideaCardRender } from '../render/idea-card.render'
@@ -12,33 +11,28 @@ export class IdeaController implements DestroyableController {
   private service: IdeaService
   private container: HTMLElement
   private actions: Record<string, (id: string) => Promise<void> | void>
-  private boundHandlerClick: (ev: PointerEvent) => Promise<void>
-  private boundHandlerSubmit: (ev: SubmitEvent) => Promise<void>
+  /*   private boundHandlerClick: (ev: PointerEvent) => Promise<void>
+  private boundHandlerSubmit: (ev: SubmitEvent) => Promise<void> */
 
   constructor(service: IdeaService, container: HTMLElement, modalService: ModalService) {
     this.modalService = modalService
     this.service = service
     this.container = container
-    //binds
-    this.boundHandlerClick = this.handlerClick.bind(this)
-    this.boundHandlerSubmit = this.handlerSubmit.bind(this)
+    //binds  X  refactor arrow f
+    /* this.boundHandlerClick = this.handlerClick.bind(this)
+    this.boundHandlerSubmit = this.handlerSubmit.bind(this) */
 
     //actions
     this.actions = {
-      edit: this.editIdea.bind(this),
-      delete: this.deleteIdea.bind(this),
+      edit: this.editIdea,
+      delete: this.deleteIdea,
     }
     console.log(this.actions)
     this.setupDelegation()
     this.listIdea()
   }
 
-  destroy(): void {
-    this.container.removeEventListener('submit', this.boundHandlerSubmit)
-    this.container.removeEventListener('click', this.boundHandlerClick)
-  }
-
-  private async handlerClick(ev: PointerEvent) {
+  handlerClick = async (ev: PointerEvent) => {
     ev.preventDefault()
     const target = ev.target as HTMLElement
 
@@ -61,7 +55,8 @@ export class IdeaController implements DestroyableController {
       await handler(id)
     }
   }
-  private async handlerSubmit(ev: SubmitEvent) {
+
+  private handlerSubmit = async (ev: SubmitEvent) => {
     ev.preventDefault()
 
     const target = ev.target as HTMLFormElement
@@ -70,12 +65,13 @@ export class IdeaController implements DestroyableController {
   }
   setupDelegation() {
     console.log('setup delegation idea')
-    this.container.addEventListener('submit', this.boundHandlerSubmit)
+    this.container.addEventListener('submit', this.handlerSubmit)
     //click
-    this.container.addEventListener('click', this.boundHandlerClick)
+    this.container.addEventListener('click', this.handlerClick)
   }
 
-  private async deleteIdea(id: string): Promise<void> {
+  private deleteIdea = async (id: string): Promise<void> => {
+    console.log('delete idea')
     await this.service.destroy(id)
     const card = document.getElementById(id)
     console.log('card', card)
@@ -84,7 +80,20 @@ export class IdeaController implements DestroyableController {
     }
   }
 
-  private handlerSubmitEdit = async (ev:Event) => {
+  private editIdea = async (id: string) => {
+    const exit = await this.service.getById(id)
+    if (exit) {
+      const form = editIdeaForm(exit)
+
+      this.modalService.registerHandler('submit', this.handlerSubmitEditModal)
+      /* form.addEventListener('submit', this.handlerSubmitEdit,{once:true}) */
+      this.modalService.showModal(form)
+
+      console.log('show form with idea', id)
+    }
+  }
+
+  private handlerSubmitEditModal = async (ev: Event) => {
     ev.preventDefault()
 
     const target = ev.target as HTMLFormElement
@@ -105,28 +114,20 @@ export class IdeaController implements DestroyableController {
 
     this.modalService.closeModal()
   }
-  private async editIdea(id: string) {
-    const exit = await this.service.getById(id)
-    if (exit) {
-      const form = editIdeaForm(exit)
 
-      this.modalService.registerHandler("submit",this.handlerSubmitEdit)
-      /* form.addEventListener('submit', this.handlerSubmitEdit,{once:true}) */
-      this.modalService.showModal(form)
-
-      console.log('show form with idea', id)
-    }
-  }
-  private async listIdea() {
+  private listIdea = async () => {
     const list = await this.service.getAll()
     console.log(list)
-    // add card the list
-    console.log(this.container)
 
     const div = this.container.querySelector('#idea-list-div')
     console.log(div)
     list.forEach(l => {
       div?.append(ideaCardRender(l))
     })
+  }
+  //interface
+  destroy(): void {
+    this.container.removeEventListener('submit', this.handlerSubmit)
+    this.container.removeEventListener('click', this.handlerClick)
   }
 }
