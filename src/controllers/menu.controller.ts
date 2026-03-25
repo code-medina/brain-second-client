@@ -2,6 +2,7 @@ import type { AppServices } from '../interfaces/app.services'
 import type { DestroyableController } from '../interfaces/destroyable-controller.interface'
 import { ideaSectionRender } from '../render/idea-section.render'
 import { render } from '../render/render'
+import type { ModalService } from '../services/modal.service'
 
 import { IdeaController } from './idea.controller'
 
@@ -11,7 +12,14 @@ export class MenuController {
   private services: AppServices
   private currentController: DestroyableController | null = null
   private router: Record<string, () => void | Promise<void>>
-  constructor(container: HTMLElement, menu: HTMLElement, services: AppServices) {
+  private modalService:ModalService;
+  constructor(
+    container: HTMLElement,
+    menu: HTMLElement,
+    services: AppServices,
+    modalService: ModalService
+  ) {
+    this.modalService=modalService;
     this.routerOutlet = container
     this.menu = menu
     this.services = services
@@ -57,6 +65,7 @@ export class MenuController {
     {
       this.currentController.destroy()
     }
-    this.currentController = new IdeaController(this.services.idea, this.routerOutlet)
+    this.currentController = new IdeaController(this.services.idea, this.routerOutlet,this.modalService)
   }
+
 }
