@@ -1,16 +1,11 @@
-
-export function createSectionIdea(){
-/*   const fragment = document.createDocumentFragment() */
+export function createSectionIdea() {
   const div = document.createElement('div')
-/* 
-  div.id = 'idea-list-div'
-  div.textContent = 'list the ideas'
- */
-  const form = document.createElement('form')
-/*   form.id="idea-form"
-  fragment.append(div)
- fragment.append(form) 
- return fragment 
- */
-  return {div,form};
+  const main = document.createElement('main')
+  const header = document.createElement('header')
+  const button = document.createElement('button')
+  header.append(button)
+
+  div.append(header)
+  div.append(main)
+  return { div, header, button, main }
 }

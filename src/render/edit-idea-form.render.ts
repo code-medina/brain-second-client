@@ -1,7 +1,7 @@
 import type { IdeaSchema } from '../schemas/idea/idea.schema'
 import { ideaForm } from '../ui/idea-form'
 
-export function editIdeaForm(idea: IdeaSchema) {
+export function editIdeaFormRender(idea: IdeaSchema) {
   //todo  throw error if idea not defined
 
   const root = ideaForm()

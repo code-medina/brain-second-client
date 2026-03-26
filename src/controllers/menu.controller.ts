@@ -58,7 +58,7 @@ export class MenuController {
     const section = ideaSectionRender()
     const frag = document.createDocumentFragment()
 
-    frag.append(section.div, section.form)
+    frag.append(section.div)
     render(this.routerOutlet, frag)
 
     if (this.currentController?.destroy) //elimino anterior controller
