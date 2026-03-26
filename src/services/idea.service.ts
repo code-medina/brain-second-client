@@ -10,6 +10,15 @@ export class IdeaService {
     this.repo = repository
   }
 
+  async getById(id:string)
+  {
+    const lista=await this.repo.list()
+    if(lista.length>0)
+    {
+      return lista.filter(i=>i._id===id)[0]|| null;
+    }
+    return null;
+  }
   async create(dto: CreateIdeaSchema) {
     return await this.repo.create(dto)
   }
