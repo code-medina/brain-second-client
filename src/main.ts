@@ -4,6 +4,7 @@ import { seedIdeas } from './seed/seed'
 import { IdeaService } from './services/idea.service'
 import { ModalService } from './core/modal.service'
 import './style.css'
+import { HandlerError } from './core/handler-error'
 
 /* 
 const menuIdea=document.getElementById("menu-idea");
@@ -18,5 +19,6 @@ const dialog = document.getElementById('modal-dialog') as HTMLDialogElement
 const content = document.getElementById('content-dialog') as HTMLElement
 if (dialog && content) {
   const modalService = new ModalService(dialog, content)
-  new MenuController(routerOutlet!, menu!, { idea: ideaService }, modalService)
+  const handlerError=new HandlerError(modalService);
+  new MenuController(routerOutlet!, menu!, { idea: ideaService }, modalService,handlerError)
 }
