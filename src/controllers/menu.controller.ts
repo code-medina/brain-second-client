@@ -3,7 +3,7 @@ import type { DestroyableController } from '../interfaces/destroyable-controller
 import { ideaSectionRender } from '../render/idea-section.render'
 import { knowledgeSectionRender } from '../render/knowledge-section.render'
 import { render } from '../render/render'
-import type { ModalService } from '../services/modal.service'
+import type { ModalService } from '../core/modal.service'
 
 import { IdeaController } from './idea.controller'
 import { KnowledgeController } from './knowledge.controller'

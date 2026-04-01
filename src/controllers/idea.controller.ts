@@ -3,7 +3,7 @@ import { editIdeaFormRender } from '../render/edit-idea-form.render'
 import { ideaCardRender } from '../render/idea-card.render'
 
 import type { IdeaService } from '../services/idea.service'
-import type { ModalService } from '../services/modal.service'
+import type { ModalService } from '../core/modal.service'
 import { UpdateIdeaSchema } from '../schemas/idea/update-idea.schema'
 import { CreateIdeaSchema } from '../schemas/idea/create-idea.schema'
 import { newIdeaFormRender } from '../render/new-idea-form.render'

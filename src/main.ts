@@ -2,7 +2,7 @@ import { MenuController } from './controllers/menu.controller'
 import { IdeaLocalStorageRespository } from './repositories/idea-local-storage.repository'
 import { seedIdeas } from './seed/seed'
 import { IdeaService } from './services/idea.service'
-import { ModalService } from './services/modal.service'
+import { ModalService } from './core/modal.service'
 import './style.css'
 
 /* 
@@ -17,6 +17,6 @@ seedIdeas() //mock
 const dialog = document.getElementById('modal-dialog') as HTMLDialogElement
 const content = document.getElementById('content-dialog') as HTMLElement
 if (dialog && content) {
-  const modalService = new ModalService(dialog,content);
-  new MenuController(routerOutlet!, menu!, { idea: ideaService },modalService)
+  const modalService = new ModalService(dialog, content)
+  new MenuController(routerOutlet!, menu!, { idea: ideaService }, modalService)
 }
