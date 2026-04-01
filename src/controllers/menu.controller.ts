@@ -1,10 +1,12 @@
 import type { AppServices } from '../interfaces/app.services'
 import type { DestroyableController } from '../interfaces/destroyable-controller.interface'
 import { ideaSectionRender } from '../render/idea-section.render'
+import { knowledgeSectionRender } from '../render/knowledge-section.render'
 import { render } from '../render/render'
 import type { ModalService } from '../services/modal.service'
 
 import { IdeaController } from './idea.controller'
+import { KnowledgeController } from './knowledge.controller'
 
 export class MenuController {
   private routerOutlet: HTMLElement
@@ -12,14 +14,14 @@ export class MenuController {
   private services: AppServices
   private currentController: DestroyableController | null = null
   private router: Record<string, () => void | Promise<void>>
-  private modalService:ModalService;
+  private modalService: ModalService
   constructor(
     container: HTMLElement,
     menu: HTMLElement,
     services: AppServices,
     modalService: ModalService
   ) {
-    this.modalService=modalService;
+    this.modalService = modalService
     this.routerOutlet = container
     this.menu = menu
     this.services = services
@@ -49,6 +51,15 @@ export class MenuController {
   private showKnowledge() {
     console.log('show knowledge')
     console.log('create controller knowledge')
+    const section = knowledgeSectionRender()
+    const frag = document.createDocumentFragment()
+    frag.append(section.div)
+    render(this.routerOutlet, frag)
+
+    if (this.currentController?.destroy) {
+      this.currentController.destroy()
+    }
+    this.currentController = new KnowledgeController(this.routerOutlet)
   }
   private showDevLog() {
     console.log('show devlog')
@@ -65,7 +76,10 @@ export class MenuController {
     {
       this.currentController.destroy()
     }
-    this.currentController = new IdeaController(this.services.idea, this.routerOutlet,this.modalService)
+    this.currentController = new IdeaController(
+      this.services.idea,
+      this.routerOutlet,
+      this.modalService
+    )
   }
-
 }
