@@ -7,6 +7,7 @@ import type { ModalService } from '../core/modal.service'
 
 import { IdeaController } from './idea.controller'
 import { KnowledgeController } from './knowledge.controller'
+import type { HandlerError } from '../core/handler-error'
 
 export class MenuController {
   private routerOutlet: HTMLElement
@@ -15,12 +16,15 @@ export class MenuController {
   private currentController: DestroyableController | null = null
   private router: Record<string, () => void | Promise<void>>
   private modalService: ModalService
+  private handlerError:HandlerError;
   constructor(
     container: HTMLElement,
     menu: HTMLElement,
     services: AppServices,
-    modalService: ModalService
+    modalService: ModalService,
+    handlerError:HandlerError
   ) {
+    this.handlerError=handlerError;
     this.modalService = modalService
     this.routerOutlet = container
     this.menu = menu
@@ -79,7 +83,8 @@ export class MenuController {
     this.currentController = new IdeaController(
       this.services.idea,
       this.routerOutlet,
-      this.modalService
+      this.modalService,this.handlerError
+
     )
   }
 }

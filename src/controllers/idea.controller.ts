@@ -9,17 +9,24 @@ import { CreateIdeaSchema } from '../schemas/idea/create-idea.schema'
 import { newIdeaFormRender } from '../render/new-idea-form.render'
 import { render } from '../render/render'
 import { messageErrorCardRender } from '../render/message-error-card.render'
+import type { HandlerError } from '../core/handler-error'
 
 export class IdeaController implements DestroyableController {
   private modalService: ModalService
   private service: IdeaService
   private container: HTMLElement
   private actions: Record<string, (id?: string) => Promise<void> | void>
-
-  constructor(service: IdeaService, container: HTMLElement, modalService: ModalService) {
+  private handlerError: HandlerError
+  constructor(
+    service: IdeaService,
+    container: HTMLElement,
+    modalService: ModalService,
+    handlerError: HandlerError
+  ) {
     this.modalService = modalService
     this.service = service
     this.container = container
+    this.handlerError = handlerError
 
     //actions
     this.actions = {
@@ -180,20 +187,12 @@ export class IdeaController implements DestroyableController {
         card.replaceWith(cardEdit)
       } catch (error) {
         //modal service
-        const cardError = messageErrorCardRender(
-          'Update failed',
-          `Error update idea ${(error as Error)?.message || ''}`
-        )
-        this.modalService.showModal(cardError)
-
+        this.handlerError.handle(error, '❗Update Failed ')
         console.log('Error edit idea input', error)
       }
     } else {
-      const cardError = messageErrorCardRender(
-        'Error invalid input',
-        update.error.issues.map(t => t.message).join('\n')
-      )
-      this.modalService.showModal(cardError)
+      const newError = new Error(`${update.error.issues.map(t => t.message).join('\n')}`)
+      this.handlerError.handle(newError, '❗Invalid input')
       console.log('Error edit idea input', update.error.issues.map(t => t.message).join('\n'))
     }
   }
