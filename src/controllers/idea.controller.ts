@@ -8,6 +8,7 @@ import { UpdateIdeaSchema } from '../schemas/idea/update-idea.schema'
 import { CreateIdeaSchema } from '../schemas/idea/create-idea.schema'
 import { newIdeaFormRender } from '../render/new-idea-form.render'
 import { render } from '../render/render'
+import { messageErrorCardRender } from '../render/message-error-card.render'
 
 export class IdeaController implements DestroyableController {
   private modalService: ModalService
@@ -80,7 +81,10 @@ export class IdeaController implements DestroyableController {
     //register handler y new form show modal
     this.modalService.registerHandler('click', (ev: Event) => {
       if (ev as PointerEvent) {
-        this.modalService.closeModal()
+        const target = ev.target as HTMLElement
+        if (target && target.matches('[type="button"]')) {
+          this.modalService.closeModal()
+        }
       }
     })
     this.modalService.registerHandler('submit', (ev: Event) =>
@@ -100,7 +104,10 @@ export class IdeaController implements DestroyableController {
 
       this.modalService.registerHandler('click', (ev: Event) => {
         if (ev as PointerEvent) {
-          this.modalService.closeModal()
+          const target = ev.target as HTMLElement
+          if (target && target.matches('[type="button"]')) {
+            this.modalService.closeModal()
+          }
         }
       })
       this.modalService.registerHandler('submit', (ev: Event) =>
@@ -172,13 +179,23 @@ export class IdeaController implements DestroyableController {
         console.log('edit card', cardEdit)
         card.replaceWith(cardEdit)
       } catch (error) {
+        //modal service
+        const cardError = messageErrorCardRender(
+          'Update failed',
+          `Error update idea ${(error as Error)?.message || ''}`
+        )
+        this.modalService.showModal(cardError)
+
         console.log('Error edit idea input', error)
       }
     } else {
-      alert('data invalid')
+      const cardError = messageErrorCardRender(
+        'Error invalid input',
+        update.error.issues.map(t => t.message).join('\n')
+      )
+      this.modalService.showModal(cardError)
+      console.log('Error edit idea input', update.error.issues.map(t => t.message).join('\n'))
     }
-
-    this.modalService.closeModal()
   }
 
   //init contruct

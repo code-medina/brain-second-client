@@ -10,6 +10,7 @@ export class ModalService {
     this.content.addEventListener(type, handler, { once: true })
   }
   showModal = (element: HTMLElement) => {
+    console.log("funciona??")
     if (this.content) {
       this.content.replaceChildren()
       this.content.append(element)
