@@ -1,14 +1,12 @@
 import type { DestroyableController } from '../interfaces/destroyable-controller.interface'
 import { editIdeaFormRender } from '../render/edit-idea-form.render'
 import { ideaCardRender } from '../render/idea-card.render'
-
 import type { IdeaService } from '../services/idea.service'
 import type { ModalService } from '../core/modal.service'
 import { UpdateIdeaSchema } from '../schemas/idea/update-idea.schema'
 import { CreateIdeaSchema } from '../schemas/idea/create-idea.schema'
 import { newIdeaFormRender } from '../render/new-idea-form.render'
 import { render } from '../render/render'
-import { messageErrorCardRender } from '../render/message-error-card.render'
 import type { HandlerError } from '../core/handler-error'
 
 export class IdeaController implements DestroyableController {
@@ -88,10 +86,7 @@ export class IdeaController implements DestroyableController {
     //register handler y new form show modal
     this.modalService.registerHandler('click', (ev: Event) => {
       if (ev as PointerEvent) {
-        const target = ev.target as HTMLElement
-        if (target && target.matches('[type="button"]')) {
-          this.modalService.closeModal()
-        }
+        this.handlerCloseModal(ev as PointerEvent)
       }
     })
     this.modalService.registerHandler('submit', (ev: Event) =>
@@ -111,19 +106,22 @@ export class IdeaController implements DestroyableController {
 
       this.modalService.registerHandler('click', (ev: Event) => {
         if (ev as PointerEvent) {
-          const target = ev.target as HTMLElement
-          if (target && target.matches('[type="button"]')) {
-            this.modalService.closeModal()
-          }
+          this.handlerCloseModal(ev as PointerEvent)
         }
       })
       this.modalService.registerHandler('submit', (ev: Event) =>
         this.handlerSubmitEditModal(ev as SubmitEvent)
       )
-      /* form.addEventListener('submit', this.handlerSubmitEdit,{once:true}) */
       this.modalService.showModal(form)
 
       console.log('show form with idea', id)
+    }
+  }
+  /* MODAL HANDLER */
+  private handlerCloseModal = (ev: PointerEvent) => {
+    const target = ev.target as HTMLElement
+    if (target && target.matches('[type="button"]')) {
+      this.modalService.closeModal()
     }
   }
 
@@ -142,6 +140,7 @@ export class IdeaController implements DestroyableController {
     if (schema.success) {
       try {
         const newIdea = await this.service.create(schema.data)
+        this.modalService.closeModal()
 
         //card append
         const cardNew = ideaCardRender(newIdea)
@@ -149,13 +148,13 @@ export class IdeaController implements DestroyableController {
         const div = this.container.querySelector('#idea-list-div')
         div?.prepend(cardNew)
       } catch (error) {
+        this.handlerError.handle(error, '❗Error new idea')
         console.log('Error new idea input', error)
       }
     } else {
-      alert('data invalid')
+      const newError = new Error(`Error: ${schema.error.issues.map(e => e.message).join('\n')}`)
+      this.handlerError.handle(newError, '❗Invalid input')
     }
-
-    this.modalService.closeModal()
   }
   private handlerSubmitEditModal = async (ev: SubmitEvent) => {
     ev.preventDefault()
@@ -172,7 +171,6 @@ export class IdeaController implements DestroyableController {
     const card = document.getElementById(id || '')
     if (!card) {
       console.log('no exist card id', id)
-
       return
     }
 
@@ -180,6 +178,7 @@ export class IdeaController implements DestroyableController {
 
     if (update.success) {
       try {
+        this.modalService.closeModal()
         const ideaEdit = await this.service.update(update.data)
         //remplace card
         const cardEdit = ideaCardRender(ideaEdit)
