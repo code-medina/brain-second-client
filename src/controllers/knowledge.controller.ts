@@ -1,17 +1,25 @@
+import type { ModalService } from '../core/modal.service'
 import type { DestroyableController } from '../interfaces/destroyable-controller.interface'
+import { newKnowledgeFormRender } from '../render/form-knowledge.render'
 import { knowledgeCardRender } from '../render/knowledge-card.render'
 import { render } from '../render/render'
+import { CreateKnowledgeSchema } from '../schemas/knowledge/create-knowledge.schema'
 
 export class KnowledgeController implements DestroyableController {
+  private modalService: ModalService
   private container: HTMLElement
-  private actions: Record<string, (id?: string) => void | Promise<void>>
 
-  constructor(container: HTMLElement) {
+  private actions: Record<string, (id?: string) => Promise<void> | void>
+
+  constructor(container: HTMLElement, modalService: ModalService) {
+    this.modalService = modalService
     this.container = container
     this.listKnowledge()
     this.actions = {
-      search: () => alert(
-        'mock search'),
+      new: this.showFormNewKnowledge,
+      edit: () => alert('edit knowledge'),
+      delete: () => alert('delete knowledge'),
+      search: () => alert('mock search'), //todo search not  handle click must be input event
     }
     this.container.addEventListener('click', this.handleClick)
   }
@@ -28,10 +36,6 @@ export class KnowledgeController implements DestroyableController {
       list.forEach(k => frag.append(knowledgeCardRender(k)))
       render(div, frag)
     }
-
-    // container.query selector(id) div
-    //append list
-    //  render(div, frag)
   }
   //handler click for container
   private handleClick = async (ev: PointerEvent) => {
@@ -51,6 +55,36 @@ export class KnowledgeController implements DestroyableController {
   }
   destroy(): void {
     //limpia listeners
-    throw new Error('Method not implemented.')
+    this.container.removeEventListener('click', this.handleClick)
+  }
+
+  //action event
+  showFormNewKnowledge = () => {
+    //need modalservice and
+    const p = document.createElement('p')
+    p.textContent = 'new knowledge form'
+    const form = newKnowledgeFormRender()
+
+    this.modalService.showModal(form)
+    //  create form
+    // handle new know with service
+
+    this.modalService.registerHandler('submit', async (ev: Event) => {
+      //close formulario 
+      ev.preventDefault()
+      const e = ev as SubmitEvent
+      const target = e.target as HTMLFormElement
+      const formData = new FormData(target)
+      const title = formData.get('title')?.toString()
+      const content = formData.get('content')?.toString()
+      const schema = CreateKnowledgeSchema.safeParse({ title, content })
+      this.modalService.closeModal();
+      if (!schema.success) {
+        //handleError
+        alert('no valido')
+        return
+      }
+      alert('new knowledge')
+    })
   }
 }

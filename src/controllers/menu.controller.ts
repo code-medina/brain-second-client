@@ -63,7 +63,7 @@ export class MenuController {
     if (this.currentController?.destroy) {
       this.currentController.destroy()
     }
-    this.currentController = new KnowledgeController(this.routerOutlet)
+    this.currentController = new KnowledgeController(this.routerOutlet,this.modalService);
   }
   private showDevLog() {
     console.log('show devlog')
