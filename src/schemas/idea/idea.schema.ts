@@ -10,7 +10,7 @@ const TITLE_MAX = 20
 export const IdeaSchema = BaseEntitySchema.extend({
   title: z
     .string()
-    .min(TITLE_MIN, `[ title ] too shor`)
+    .min(TITLE_MIN, `[ title ] too short`)
     .max(TITLE_MAX, `[ title ] maximun of ${TITLE_MAX} characteres`),
   description: z
     .string()
