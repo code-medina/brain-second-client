@@ -10,3 +10,6 @@ export async function seedIdeas() {
     })
   }
 }
+export function seedKnowledges(){
+
+}

@@ -5,6 +5,7 @@ import { newKnowledgeFormRender } from '../render/form-knowledge.render'
 import { knowledgeCardRender } from '../render/knowledge-card.render'
 import { render } from '../render/render'
 import { CreateKnowledgeSchema } from '../schemas/knowledge/create-knowledge.schema'
+import { knowledgeSeed } from '../seed/knowledge.seed'
 import type { KnowledgeService } from '../services/knowledge.service'
 
 export class KnowledgeController implements DestroyableController {
@@ -36,9 +37,7 @@ export class KnowledgeController implements DestroyableController {
 
   //init contruct
   private listKnowledge = async () => {
-    const list = [{ _id: '1', title: 'cli', content: 'contente cli', createdAt: new Date() }]
-    console.log(list)
-    console.log(this.container)
+    const list = [...knowledgeSeed]
     const div = this.container.querySelector('#knowledge-list-div') as HTMLElement
     if (div) {
       console.log('ui list', div, list)
