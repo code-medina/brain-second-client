@@ -5,7 +5,6 @@ import { newKnowledgeFormRender } from '../render/form-knowledge.render'
 import { knowledgeCardRender } from '../render/knowledge-card.render'
 import { render } from '../render/render'
 import { CreateKnowledgeSchema } from '../schemas/knowledge/create-knowledge.schema'
-import { knowledgeSeed } from '../seed/knowledge.seed'
 import type { KnowledgeService } from '../services/knowledge.service'
 
 export class KnowledgeController implements DestroyableController {
@@ -37,13 +36,17 @@ export class KnowledgeController implements DestroyableController {
 
   //init contruct
   private listKnowledge = async () => {
-    const list = [...knowledgeSeed]
-    const div = this.container.querySelector('#knowledge-list-div') as HTMLElement
-    if (div) {
-      console.log('ui list', div, list)
-      const frag = document.createDocumentFragment()
-      list.forEach(k => frag.append(knowledgeCardRender(k)))
-      render(div, frag)
+    try {
+      const list = await this.service.listKnowledge()
+      const div = this.container.querySelector('#knowledge-list-div') as HTMLElement
+      if (div) {
+        const frag = document.createDocumentFragment()
+        list.forEach(k => frag.append(knowledgeCardRender(k)))
+        render(div, frag)
+      }
+    } catch (error) {
+      console.log(error)
+      this.handlerError.handle(error, '⚠️ Error list knowledge')
     }
   }
   //handler click for container
