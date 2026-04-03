@@ -1,3 +1,4 @@
+import type { HandlerError } from '../core/handler-error'
 import type { ModalService } from '../core/modal.service'
 import type { DestroyableController } from '../interfaces/destroyable-controller.interface'
 import { newKnowledgeFormRender } from '../render/form-knowledge.render'
@@ -6,12 +7,14 @@ import { render } from '../render/render'
 import { CreateKnowledgeSchema } from '../schemas/knowledge/create-knowledge.schema'
 
 export class KnowledgeController implements DestroyableController {
+  private handlerError: HandlerError
   private modalService: ModalService
   private container: HTMLElement
 
   private actions: Record<string, (id?: string) => Promise<void> | void>
 
-  constructor(container: HTMLElement, modalService: ModalService) {
+  constructor(container: HTMLElement, modalService: ModalService,handle:HandlerError) {
+    this.handlerError=handle;
     this.modalService = modalService
     this.container = container
     this.listKnowledge()
@@ -70,7 +73,7 @@ export class KnowledgeController implements DestroyableController {
     // handle new know with service
 
     this.modalService.registerHandler('submit', async (ev: Event) => {
-      //close formulario 
+      //close formulario
       ev.preventDefault()
       const e = ev as SubmitEvent
       const target = e.target as HTMLFormElement
@@ -78,10 +81,10 @@ export class KnowledgeController implements DestroyableController {
       const title = formData.get('title')?.toString()
       const content = formData.get('content')?.toString()
       const schema = CreateKnowledgeSchema.safeParse({ title, content })
-      this.modalService.closeModal();
+      this.modalService.closeModal()
       if (!schema.success) {
-        //handleError
-        alert('no valido')
+        const newError=new Error(`${schema.error.issues.map(e=>e.message).join("\n")}`);
+        this.handlerError.handle(newError,"⚠️ Error invalid input");
         return
       }
       alert('new knowledge')
