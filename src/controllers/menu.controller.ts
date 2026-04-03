@@ -66,7 +66,8 @@ export class MenuController {
     this.currentController = new KnowledgeController(
       this.routerOutlet,
       this.modalService,
-      this.handlerError
+      this.handlerError,
+      this.services.knowledge
     )
   }
   private showDevLog() {

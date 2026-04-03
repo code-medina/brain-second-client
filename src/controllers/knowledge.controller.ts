@@ -5,16 +5,23 @@ import { newKnowledgeFormRender } from '../render/form-knowledge.render'
 import { knowledgeCardRender } from '../render/knowledge-card.render'
 import { render } from '../render/render'
 import { CreateKnowledgeSchema } from '../schemas/knowledge/create-knowledge.schema'
+import type { KnowledgeService } from '../services/knowledge.service'
 
 export class KnowledgeController implements DestroyableController {
   private handlerError: HandlerError
   private modalService: ModalService
   private container: HTMLElement
-
+  private service: KnowledgeService
   private actions: Record<string, (id?: string) => Promise<void> | void>
 
-  constructor(container: HTMLElement, modalService: ModalService,handle:HandlerError) {
-    this.handlerError=handle;
+  constructor(
+    container: HTMLElement,
+    modalService: ModalService,
+    handle: HandlerError,
+    service: KnowledgeService
+  ) {
+    this.service = service
+    this.handlerError = handle
     this.modalService = modalService
     this.container = container
     this.listKnowledge()
@@ -73,21 +80,30 @@ export class KnowledgeController implements DestroyableController {
     // handle new know with service
 
     this.modalService.registerHandler('submit', async (ev: Event) => {
-      //close formulario
-      ev.preventDefault()
       const e = ev as SubmitEvent
-      const target = e.target as HTMLFormElement
-      const formData = new FormData(target)
-      const title = formData.get('title')?.toString()
-      const content = formData.get('content')?.toString()
-      const schema = CreateKnowledgeSchema.safeParse({ title, content })
-      this.modalService.closeModal()
-      if (!schema.success) {
-        const newError=new Error(`${schema.error.issues.map(e=>e.message).join("\n")}`);
-        this.handlerError.handle(newError,"⚠️ Error invalid input");
-        return
-      }
-      alert('new knowledge')
+      this.onSubmitNewKnowledge(e)
     })
+  }
+  onSubmitNewKnowledge = async (ev: SubmitEvent) => {
+    ev.preventDefault()
+    const target = ev.target as HTMLFormElement
+    const formData = new FormData(target)
+    const title = formData.get('title')?.toString() || ''
+    const content = formData.get('content')?.toString() || ''
+    const dto = { title, content }
+    const schema = CreateKnowledgeSchema.safeParse(dto)
+    this.modalService.closeModal()
+    if (!schema.success) {
+      const newError = new Error(`${schema.error.issues.map(e => e.message).join('\n')}`)
+      this.handlerError.handle(newError, '⚠️ Error invalid input')
+      return
+    } else {
+      const newKnowledge = await this.service.createKnowledge(dto)
+      const card = knowledgeCardRender(newKnowledge)
+      if (card) {
+        const div = this.container.querySelector('#knowledge-list-div') as HTMLElement
+        div?.prepend(card)
+      }
+    }
   }
 }
