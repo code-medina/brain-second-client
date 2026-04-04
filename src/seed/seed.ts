@@ -1,5 +1,7 @@
 import { IdeaLocalStorageRespository } from '../repositories/idea-local-storage.repository'
+import { KnowledgeStorageRespository } from '../repositories/knowledge.repository'
 import { ideasSeed } from './idea.seed'
+import { knowledgeSeed } from './knowledge.seed'
 
 export async function seedIdeas() {
   const repo = new IdeaLocalStorageRespository()
@@ -10,6 +12,10 @@ export async function seedIdeas() {
     })
   }
 }
-export function seedKnowledges(){
-
+export async function seedKnowledges() {
+  const repo = new KnowledgeStorageRespository()
+  const list = await repo.list()
+  if (list.length === 0) {
+    knowledgeSeed.forEach(k => repo.create(k))
+  }
 }

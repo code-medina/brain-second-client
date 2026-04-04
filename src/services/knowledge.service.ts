@@ -1,14 +1,15 @@
+import type { KnowledgeRespository } from '../repositories/knowledge.repository'
 import type { CreateKnowledgeSchema } from '../schemas/knowledge/create-knowledge.schema'
-import { knowledgeSeed } from '../seed/knowledge.seed'
 
 export class KnowledgeService {
+  private repo: KnowledgeRespository
+  constructor(repo: KnowledgeRespository) {
+    this.repo = repo
+  }
   createKnowledge = async (dto: CreateKnowledgeSchema) => {
-    const _id = '1'
-    const createdAt = new Date()
-    return { _id, title: dto.title, content: dto.content, createdAt }
+    return await this.repo.create(dto)
   }
   listKnowledge = async () => {
-    const list = [...knowledgeSeed]
-    return list
+    return await this.repo.list()
   }
 }
