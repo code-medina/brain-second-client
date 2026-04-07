@@ -10,9 +10,9 @@ export function createKnowledgeCard() {
   main.append(content)
 
   const footer = document.createElement('footer')
-
+ 
   div.append(header)
   div.append(main)
   div.append(footer)
-  return { div, title, main, content, footer }
+  return { div, title, main, content,footer }
 }

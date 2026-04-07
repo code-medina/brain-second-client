@@ -6,6 +6,7 @@ export function knowledgeSectionRender() {
   root.button.textContent = 'new'
   root.button.dataset.action = 'new'
   root.input.dataset.action = 'search'
+  root.input.placeholder = ' 🔎 search'
 
   return root
 }

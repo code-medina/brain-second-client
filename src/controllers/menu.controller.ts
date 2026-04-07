@@ -16,15 +16,15 @@ export class MenuController {
   private currentController: DestroyableController | null = null
   private router: Record<string, () => void | Promise<void>>
   private modalService: ModalService
-  private handlerError:HandlerError;
+  private handlerError: HandlerError
   constructor(
     container: HTMLElement,
     menu: HTMLElement,
     services: AppServices,
     modalService: ModalService,
-    handlerError:HandlerError
+    handlerError: HandlerError
   ) {
-    this.handlerError=handlerError;
+    this.handlerError = handlerError
     this.modalService = modalService
     this.routerOutlet = container
     this.menu = menu
@@ -63,7 +63,12 @@ export class MenuController {
     if (this.currentController?.destroy) {
       this.currentController.destroy()
     }
-    this.currentController = new KnowledgeController(this.routerOutlet)
+    this.currentController = new KnowledgeController(
+      this.routerOutlet,
+      this.modalService,
+      this.handlerError,
+      this.services.knowledge
+    )
   }
   private showDevLog() {
     console.log('show devlog')
@@ -83,8 +88,8 @@ export class MenuController {
     this.currentController = new IdeaController(
       this.services.idea,
       this.routerOutlet,
-      this.modalService,this.handlerError
-
+      this.modalService,
+      this.handlerError
     )
   }
 }
