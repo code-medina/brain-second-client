@@ -1,24 +1,32 @@
+import { MenuController } from './controllers/menu.controller'
+import { IdeaLocalStorageRespository } from './repositories/idea-local-storage.repository'
+import { seedIdeas, seedKnowledges } from './seed/seed'
+import { IdeaService } from './services/idea.service'
+import { ModalService } from './core/modal.service'
 import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import { HandlerError } from './core/handler-error'
+import { KnowledgeService } from './services/knowledge.service'
+import { KnowledgeStorageRespository } from './repositories/knowledge.repository'
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+const menu = document.getElementById('menu')
+const routerOutlet = document.getElementById('router-outlet')
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const ideaService = new IdeaService(new IdeaLocalStorageRespository())
+const knowledgeService = new KnowledgeService(new KnowledgeStorageRespository())
+seedKnowledges()//mocks
+seedIdeas() 
+const dialog = document.getElementById('modal-dialog') as HTMLDialogElement
+const content = document.getElementById('content-dialog') as HTMLElement
+
+if (dialog && content) {
+  const modalService = new ModalService(dialog, content)
+  const handlerError = new HandlerError(modalService)
+
+  new MenuController(
+    routerOutlet!,
+    menu!,
+    { idea: ideaService, knowledge: knowledgeService },
+    modalService,
+    handlerError
+  )
+}
